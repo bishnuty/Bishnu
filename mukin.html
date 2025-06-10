@@ -1,0 +1,244 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>NEON HACKER</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    html, body {
+      height: 100%;
+      font-family: 'Segoe UI', sans-serif;
+      color: white;
+      overflow: hidden;
+      background: url('https://images.alphacoders.com/133/1336612.png') no-repeat center center/cover;
+    }
+
+    #login-box {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      background: rgba(0, 0, 0, 0.75);
+      padding: 30px;
+      border-radius: 16px;
+      box-shadow: 0 0 25px #00ffe1;
+      text-align: center;
+      z-index: 2;
+      width: 90%;
+      max-width: 400px;
+    }
+
+    h2 {
+      font-size: 26px;
+      color: #00ffe1;
+      margin-bottom: 20px;
+      letter-spacing: 2px;
+    }
+
+    input[type="password"] {
+      width: 100%;
+      padding: 12px;
+      font-size: 16px;
+      border-radius: 8px;
+      border: 1px solid #0ff;
+      background: #111;
+      color: #0ff;
+      text-align: center;
+    }
+
+    input::placeholder {
+      color: #00ffe1;
+      font-weight: bold;
+      letter-spacing: 1px;
+    }
+
+    button {
+      margin-top: 15px;
+      width: 100%;
+      padding: 12px;
+      background: #00ffe1;
+      border: none;
+      font-size: 16px;
+      font-weight: bold;
+      border-radius: 8px;
+      cursor: pointer;
+      color: #000;
+      box-shadow: 0 0 10px #00ffe1;
+    }
+
+    #error {
+      margin-top: 8px;
+      color: #ff3c3c;
+      font-weight: bold;
+    }
+
+    #loading {
+      margin-top: 10px;
+      color: lime;
+      display: none;
+    }
+
+    .progress-bar {
+      margin-top: 8px;
+      background: #222;
+      height: 10px;
+      border-radius: 10px;
+      overflow: hidden;
+      display: none;
+    }
+
+    .progress-bar-inner {
+      height: 100%;
+      background: lime;
+      width: 0;
+      animation: load 2s linear forwards;
+    }
+
+    @keyframes load {
+      to { width: 100%; }
+    }
+
+    .prediction-box {
+      display: none;
+      position: absolute;
+      top: 0; left: 0;
+      width: 100%;
+      height: 100%;
+      background: url('https://images.alphacoders.com/133/1336612.png') no-repeat center center/cover;
+      padding: 30px;
+      box-sizing: border-box;
+    }
+
+    .prediction-box h3 {
+      font-size: 28px;
+      margin-bottom: 30px;
+      text-align: center;
+      color: cyan;
+      text-shadow: 0 0 10px cyan;
+    }
+
+    .data-box {
+      max-width: 400px;
+      margin: 0 auto;
+      background: rgba(0,0,0,0.7);
+      border-radius: 12px;
+      padding: 20px;
+      text-align: center;
+      box-shadow: 0 0 15px #0ff;
+      overflow-wrap: break-word;
+      word-break: break-word;
+    }
+
+    .data-box p {
+      font-size: 20px;
+      font-weight: 900;
+      letter-spacing: 2px;
+      margin: 20px 0;
+      text-shadow:
+        -1px -1px 3px #00fff9,
+        1px 1px 6px #00ffc8,
+        0 0 15px #00ffe1dd,
+        0 0 20px #00ffe1cc;
+      color: #00fff9;
+    }
+
+    #period {
+      font-size: 18px;
+      letter-spacing: 1.5px;
+    }
+  </style>
+</head>
+<body>
+
+<!-- Login Section -->
+<div id="login-box">
+  <h2>NEON HACKER</h2>
+  <input type="password" id="keyInput" placeholder="ENTER YOUR KEY" />
+  <button onclick="login()">LOGIN</button>
+  <div id="error"></div>
+  <div id="loading">Loading... please wait</div>
+  <div class="progress-bar"><div class="progress-bar-inner"></div></div>
+</div>
+
+<!-- Prediction Section -->
+<div class="prediction-box" id="prediction-box">
+  <h3>NEON HACKER PREDICTION</h3>
+  <div class="data-box">
+    <p id="period">Period: --</p>
+    <p id="prediction">Prediction: --</p>
+  </div>
+</div>
+
+<script>
+  function login() {
+    const key = document.getElementById("keyInput").value.trim().toLowerCase();
+    const error = document.getElementById("error");
+    const loading = document.getElementById("loading");
+    const progressBar = document.querySelector(".progress-bar");
+
+    if (key === "neon hacker") {
+      error.innerText = "";
+      loading.style.display = "block";
+      progressBar.style.display = "block";
+
+      setTimeout(() => {
+        document.getElementById("login-box").style.display = "none";
+        document.getElementById("prediction-box").style.display = "block";
+        startPrediction();
+      }, 2000);
+    } else {
+      error.innerText = "Wrong Key! Bye from official.";
+      loading.style.display = "none";
+      progressBar.style.display = "none";
+    }
+  }
+
+  let pastResults = [];
+  let lastPrediction = "";
+
+  function startPrediction() {
+    setInterval(() => {
+      const now = new Date();
+      const totalMinutes = now.getUTCHours() * 60 + now.getUTCMinutes();
+      const period = "1000" + (10001 + totalMinutes);
+      const date = now.getUTCFullYear().toString()
+        + String(now.getUTCMonth() + 1).padStart(2, '0')
+        + String(now.getUTCDate()).padStart(2, '0');
+
+      document.getElementById("period").innerText = "Period: " + date + period;
+
+      // --- Simulated real results (alternating prevention logic) ---
+      const simulatedResult = (totalMinutes % 3 === 0 || totalMinutes % 5 === 0) ? "BIG" : "SMALL";
+
+      // Store past results (limit to last 5)
+      pastResults.push(simulatedResult);
+      if (pastResults.length > 5) pastResults.shift();
+
+      // Count BIG and SMALL
+      const bigCount = pastResults.filter(r => r === "BIG").length;
+      const smallCount = pastResults.length - bigCount;
+
+      // Logic: Predict least frequent in past (anti-pattern)
+      let prediction = bigCount > smallCount ? "SMALL" : "BIG";
+
+      // If same count, flip previous prediction
+      if (bigCount === smallCount) {
+        prediction = lastPrediction === "BIG" ? "SMALL" : "BIG";
+      }
+
+      // Prevent repeat of same prediction more than 2 times
+      if (lastPrediction === prediction && pastResults.slice(-2).every(p => p === prediction)) {
+        prediction = prediction === "BIG" ? "SMALL" : "BIG";
+      }
+
+      lastPrediction = prediction;
+
+      document.getElementById("prediction").innerText = "Prediction: " + prediction;
+
+    }, 1000);
+  }
+</script>
+
+</body>
+</html>
